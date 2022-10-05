@@ -1,0 +1,38 @@
+  public static String solution(int[] xs) {
+        // Your code here
+       BigInteger Product=BigInteger.valueOf(1);
+       
+       if( xs.length==1 && xs[0] >= 0){
+           Product=BigInteger.valueOf(xs[0]);
+            return Product.toString();
+        }
+       if(xs[xs.length-1] ==0 && xs[0]== 0){
+           Product=BigInteger.valueOf(0);
+            return Product.toString();
+        }
+
+        int Negative=0, MaxNegative=Integer.MIN_VALUE;
+        int Positive=0, MinPositive=Integer.MAX_VALUE;
+        int zeros=0;
+        int i=0;
+        while(i< xs.length){
+			if(x[i] != 0){
+             if(if(xs[i] < 0){
+                if(xs[i] > MaxNegative){
+                    MaxNegative= xs[i];
+                }
+				Negative++;
+			 }
+			}
+            
+            i++;
+            
+            if(i==xs.length && Product.compareTo(BigInteger.ZERO) < 0 && Negative != 1 && Negative %2 != 0){
+                Product=Product.divide(BigInteger.valueOf(MaxNegative));
+                return Product.toString();
+            }
+        }
+        
+        return Product.toString();
+        
+    }
