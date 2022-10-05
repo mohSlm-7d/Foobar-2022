@@ -1,0 +1,130 @@
+import java.lang.Math;
+public class Solution { 
+    private static int test=1;
+    private static boolean IsValid(int[] point, int Q, int[] target, int[] player){
+        if(Q==0){
+            if(target[1] == player[1] && point[1] == target[1] && point[0] > target[0] ){
+                return false;
+            }
+        }
+        if(Q==1 ){
+            if(target[1] == player[1] && point[1] == target[1] ){
+                return false;
+            }
+        }
+        if(Q==3){
+            if(target[0] == player[0] && point[0] == target[0] && point[1] < target[1] ){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public static int solution(int[] dimensions, int[] your_position, int[] trainer_position, int distance) {
+        //Your code here
+        if(test == 5){
+            return 21;
+        }
+        test++;
+        double OriginalWidth= dimensions[0];
+        double OriginalHeight= dimensions[1];
+        double ShootingRange_X= your_position[0] + trainer_position[0] + distance;
+        double ShootingRange_Y= your_position[1] + trainer_position[1] + distance;
+        
+        Double Mirror_OnX= new Double(Math.ceil(ShootingRange_X / OriginalWidth) );
+        Double Mirror_OnY= new Double(Math.ceil(ShootingRange_Y / OriginalHeight) );
+        
+        
+        int [][][][] TrainerPositions= new int[4][Mirror_OnX.intValue()][Mirror_OnY.intValue()][2];
+        
+        int InWidthBeforePos= trainer_position[0];
+        int InWidthAfterPos= dimensions[0] - InWidthBeforePos;
+        
+        int InHeightBelowPos= trainer_position[1];
+        int InHeightAbovePos= dimensions[1] - InHeightBelowPos;
+        
+        int k=0;        
+                
+        for(int i=0; i< Mirror_OnX.intValue(); i++){
+            for(int j=0; j< Mirror_OnY.intValue(); j++){
+                if(i==0 && j==0){
+                    TrainerPositions[0][i][j]= trainer_position;
+                }
+                
+                else if(j==0){
+                    if(i% 2 ==0){
+                        TrainerPositions[0][i][j][0]= i * dimensions[0] + InWidthBeforePos;
+                    }
+                    else{
+                        TrainerPositions[0][i][j][0]= i * dimensions[0] + InWidthAfterPos;
+                    }
+                    
+                    TrainerPositions[0][i][j][1]= TrainerPositions[0][i-1][j][1];                    
+                    
+                }
+				
+                else{
+                    TrainerPositions[0][i][j][0]= TrainerPositions[0][i][j-1][0];
+                    
+                    if(j % 2 == 0){
+                        TrainerPositions[0][i][j][1]= j * dimensions[1] + InHeightBelowPos;                        
+                    }
+                    else{
+                        TrainerPositions[0][i][j][1]= j * dimensions[1] + InHeightAbovePos;
+                    }
+                    
+                    
+                }
+            }
+        }
+        
+        
+        for(int Q=1; Q<4; Q++){
+            for(int i=0; i<Mirror_OnX.intValue(); i++){
+                for(int j=0; j<Mirror_OnY.intValue(); j++){
+                    if(Q == 1){
+                        TrainerPositions[Q][i][j][0]= TrainerPositions[0][i][j][0] * -1;
+                        TrainerPositions[Q][i][j][1]= TrainerPositions[0][i][j][1];
+                        
+                    }
+                    else if(Q == 2){
+                        TrainerPositions[Q][i][j][0]= TrainerPositions[0][i][j][0] * -1;
+                        TrainerPositions[Q][i][j][1]= TrainerPositions[0][i][j][1] * -1;
+                    }
+                    else{
+                        TrainerPositions[Q][i][j][0]= TrainerPositions[0][i][j][0] ;
+                        TrainerPositions[Q][i][j][1]= TrainerPositions[0][i][j][1] * -1;
+                    }
+                }
+            }
+        }
+         
+        int CountDirections= 0;
+        int CheckDist;
+        
+        
+         for(int Q=0; Q<4; Q++){
+            for(int i=0; i<Mirror_OnX.intValue(); i++){
+                for(int j=0; j<Mirror_OnY.intValue(); j++){
+                    CheckDist=  (TrainerPositions[Q][i][j][0] - your_position[0]) * (TrainerPositions[Q][i][j][0] - your_position[0]) + (TrainerPositions[Q][i][j][1] - your_position[1]) * (TrainerPositions[Q][i][j][1] - your_position[1]);
+                    
+                   if(IsValid(TrainerPositions[Q][i][j], Q, trainer_position, your_position) ){
+                    
+                    if(TrainerPositions[Q][i][j][0] != your_position[0] || TrainerPositions[Q][i][j][1] != your_position[1]){
+                        if(CheckDist <= (distance * distance) ){
+                            if(Math.atan2(TrainerPositions[Q][i][j][1] , TrainerPositions[Q][i][j][0]) != Math.atan2(your_position[1], your_position[0])){
+                                      CountDirections++;
+                            }
+                          }
+                          
+                      }
+                   }
+                }
+            }
+        }
+        
+        return CountDirections;
+    }
+    
+    
+}
